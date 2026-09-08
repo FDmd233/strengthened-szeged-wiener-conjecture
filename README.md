@@ -1,0 +1,1 @@
+# strengthened-szeged-wiener-conjecture
