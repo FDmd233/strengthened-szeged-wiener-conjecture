@@ -1,0 +1,113 @@
+\[
+  \eta(F)\le15.
+\]
+
+The finite universe can now be generated without an isomorphism search.
+Start with all 853 connected seven-vertex Atlas representatives and add one
+non-isolated vertex in every possible way; retain the $2$-connected graphs
+$F$ with $\eta(F)\le15$.  This produces 97 labelled occurrences.  From each,
+generate every dominated extension from \cref{lem:encoding}; retain the
+non-special graphs $H$ with $\eta(H)\le17$.  This produces 681 occurrences.
+Finally generate every dominated extension of each retained $H$, excluding
+only the three special order-ten graphs.  At this last stage no
+$2$-connectivity filter and no isomorphism deduplication are used, so the
+300311 generated graphs form a superset of all remaining candidates.  Their
+minimum value is exactly $20$, a contradiction.
+\end{proof}
+
+\begin{remark}[What the certificate checks]\label{rem:certificate}
+The verifier performs all-pairs breadth-first search, sums the resulting
+integer distances for $W$, and for every edge $uv$ counts directly the
+vertices on the two strict distance sides to obtain the factor
+$n_{uv}(u)n_{uv}(v)$.  A graph is tested for $2$-connectivity by deleting each
+vertex in turn and checking connectivity.  The three exceptional families are
+recognized by their degree sequences, which uniquely determine them:
+\[
+\begin{aligned}
+ K_n &: (n-1)^n,\\
+ K_n^2 &: 2,(n-2)^{n-3},(n-1)^2,\\
+ K_n^{n-2} &: (n-2)^2,(n-1)^{n-2}.
+\end{aligned}
+\]
+For $K_n^2$, the two vertices of degree $n-1$ are universal, so the
+degree-$2$ vertex is forced to be adjacent exactly to them.  For
+$K_n^{n-2}$, the $n-2$ vertices of degree $n-1$ are universal, forcing the
+remaining two vertices to be non-adjacent.  Thus these degree tests introduce
+no isomorphism ambiguity.  All arithmetic is integral.  The critical order-ten
+run intentionally keeps
+repeated labelled copies, so correctness does not depend on a graph-isomorphism
+algorithm or a canonical-labelling hash.
+\end{remark}
+
+\section{Proof of the conjecture}\label{sec:proof}
+
+\begin{proof}[Proof of \cref{thm:main}]
+The case $n=10$ is \cref{prop:base10}.  Suppose $n\ge11$ and choose a
+counterexample $G$ of minimum order.  The graph is non-complete and is not
+$C_5$.  By \cref{lem:published10}, there are vertices $u,v$ with
+$N[u]\subseteq N[v]$.
+
+Fix any such pair and put $H=G-u$.  If $H$ is complete, then
+\cref{cor:complete-deletion} gives a contradiction.  If $H$ is
+$2$-connected and non-complete, there are three possibilities.  If
+\[
+ H\not\cong K_{n-1}^2,K_{n-1}^{n-3},
+\]
+then $H$ has order $n-1\ge10$ and is not one of the three exceptional graphs
+for its order.  Minimality of $G$ gives
+\[
+  \eta(H)\ge2(n-1),
+\]
+and \cref{lem:published7} gives $\eta(G)\ge2n$, a contradiction.  If
+$H\cong K_{n-1}^2$ or $K_{n-1}^{n-3}$, the contradiction follows from
+\cref{prop:k2extension,prop:kn3extension}.
+
+Consequently, for every dominated pair in $G$, the deletion of the dominated
+vertex is not $2$-connected.  The hypotheses of \cref{lem:published9} are
+therefore satisfied.  Let $C_1,\dots,C_k$ be the blocks of $G-u$ and form the
+pieces $G_i$ as in \cref{sec:blocks}.  Each $G_i$ is a proper $2$-connected subgraph of $G$, and
+\cref{lem:pieces-nonspecial} shows that it is not one of the three exceptional
+graphs for its order.
+
+If $s_i\ge10$, minimality therefore gives $\eta(G_i)\ge2s_i$; if $s_i<10$,
+\cref{prop:pieces} gives the lower bound $L(s_i)$.  Hence
+\cref{lem:blockassembly,lem:deficits} apply.  For $n\ge12$ they immediately
+give $\eta(G)\ge2n$.  If $n=11$, the only unresolved size pattern is
+$(6,7)$, which is settled by \cref{prop:glue}.  This final contradiction
+proves the theorem.
+\end{proof}
+
+\section{Certificate and reproducibility}\label{sec:repro}
+
+The supplementary archive contains three C++17 verifiers and the fixed
+small-graph snapshots used in \cref{sec:finite}.  The command
+\texttt{verify.sh} checks the SHA256 digests of the inputs, compiles the
+verifiers, and reproduces the counts and minima stated in
+\cref{prop:pieces,prop:glue,prop:base10}.  The fixed files are
+\nolinkurl{connected7_graph6.txt}, \nolinkurl{connected7_masks.txt}, and
+\nolinkurl{atlas_bases_4_7.txt}.  An optional Python script regenerates them
+from NetworkX~3.6.1; NetworkX is not needed once the snapshots are present.
+The C++ programs use only integer arithmetic and the algorithms described in
+\cref{rem:certificate}.
+
+\begin{thebibliography}{9}
+
+\bibitem{BKLPS}
+M.~Bonamy, M.~Knor, B.~Lu\v{z}ar, A.~Pinlou and R.~\v{S}krekovski,
+\emph{On the difference between the Szeged and the Wiener index},
+Appl. Math. Comput. \textbf{312} (2017), 202--213.
+\href{https://doi.org/10.1016/j.amc.2017.05.047}{doi:10.1016/j.amc.2017.05.047}.
+
+\bibitem{ReadWilson}
+R.~C.~Read and R.~J.~Wilson,
+\emph{An Atlas of Graphs}, Oxford University Press, Oxford, 1998.
+
+\bibitem{NetworkXAtlas}
+NetworkX Developers,
+\emph{Graph generators: Atlas}, NetworkX 3.6.1 documentation,
+\href{https://networkx.org/documentation/stable/reference/generated/networkx.generators.atlas.graph_atlas_g.html}{online documentation},
+accessed 8 September 2026.
+
+\end{thebibliography}
+
+\end{document}
