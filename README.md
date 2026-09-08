@@ -28,7 +28,7 @@ The argument completes the dominated-vertex induction from the 2017 paper. Compl
 The finite verification used in Section 5 is available both as an unpacked directory and as the original archive:
 
 - [`certificate/`](certificate/) -- complete reproducible certificate
-- [`Szeged_Wiener_Exact_Certificate_2026-09-08.zip`](Szeged_Wiener_Exact_Certificate_2026-09-08.zip) -- archive submitted with the manuscript
+- [`Szeged_Wiener_Exact_Certificate_2026-09-08.zip`](Szeged_Wiener_Exact_Certificate_2026-09-08.zip) -- packaged certificate archive
 
 The certificate uses only integer arithmetic. Its critical order-ten check does not rely on graph-isomorphism deduplication or floating-point computation.
 
@@ -60,7 +60,7 @@ n10 105 min 20 bad 0
 n11 160 min 23 bad 0
 ```
 
-GitHub Actions also runs the exact certificate automatically on pushes and pull requests.
+GitHub Actions also runs the exact certificate automatically on pushes and pull requests. The first complete materialization run regenerated the fixed Atlas snapshots with NetworkX 3.6.1, passed the exact certificate, compiled the manuscript, and packaged the archive successfully.
 
 ## Build the manuscript
 
@@ -72,9 +72,11 @@ make paper
 
 or compile directly with XeLaTeX.
 
-## Integrity
+## Integrity and publication record
 
 SHA256 checksums for the manuscript, archive, and unpacked certificate files are recorded in [`SHA256SUMS`](SHA256SUMS). The certificate additionally contains its own fixed-input checksum file, [`certificate/SHA256SUMS.expected`](certificate/SHA256SUMS.expected).
+
+The repository's first complete public package and successful verification run are documented in [`FIRST_PUBLICATION_RECORD.md`](FIRST_PUBLICATION_RECORD.md). This is a provenance and reproducibility record, not a substitute for peer review or independent endorsement.
 
 ## Problem and source
 
