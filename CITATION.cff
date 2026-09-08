@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "Please cite this manuscript using the metadata below."
+title: "The Strengthened Szeged-Wiener Conjecture"
+type: article
+authors:
+  - family-names: "He"
+    given-names: "Zhijie"
+version: "1.0.0"
+date-released: 2026-09-09
+repository-code: "https://github.com/FDmd233/strengthened-szeged-wiener-conjecture"
+url: "https://github.com/FDmd233/strengthened-szeged-wiener-conjecture"
+keywords:
+  - "Szeged index"
+  - "Wiener index"
+  - "2-connected graphs"
+  - "graph distance"
+  - "computer-assisted proof"
