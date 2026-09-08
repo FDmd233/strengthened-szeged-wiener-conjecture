@@ -1,0 +1,19 @@
+[self-test]
+K_n^t formula self-test: OK
+[base10]
+F8 97
+H9 681
+G10 300311 min 20 bad 0
+[pieces]
+L5=10 pieces 12
+L6=8 pieces 209
+L7=11 pieces 3258
+L8=14 pieces 48865
+order8 nonspecial eta<=14 labelled_ext 65 L9_from_low=17
+ eta9 17 count 589
+ eta9 19 count 389
+ eta9 20 count 418
+[glue]
+P6 15 P6min 10 P7min 16
+n10 105 min 20 bad 0
+n11 160 min 23 bad 0
