@@ -58,6 +58,16 @@ jobs:
         shell: bash
         run: |
           make paper
+          rm -f Szeged_Wiener_2026-09-08.aux \
+                Szeged_Wiener_2026-09-08.bbl \
+                Szeged_Wiener_2026-09-08.blg \
+                Szeged_Wiener_2026-09-08.fdb_latexmk \
+                Szeged_Wiener_2026-09-08.fls \
+                Szeged_Wiener_2026-09-08.log \
+                Szeged_Wiener_2026-09-08.out \
+                Szeged_Wiener_2026-09-08.synctex.gz \
+                Szeged_Wiener_2026-09-08.toc \
+                Szeged_Wiener_2026-09-08.xdv
           rm -rf certificate/build
           rm -f Szeged_Wiener_Exact_Certificate_2026-09-08.zip
           zip -qr Szeged_Wiener_Exact_Certificate_2026-09-08.zip certificate \
