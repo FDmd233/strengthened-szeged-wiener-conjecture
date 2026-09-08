@@ -1,9 +1,12 @@
-name: Verify exact certificate
+name: Build and verify manuscript
 
 on:
   push:
   pull_request:
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   certificate:
@@ -11,8 +14,69 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Run exact certificate
-        working-directory: certificate
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Detect first materialization
+        id: materialize
+        shell: bash
         run: |
-          chmod +x verify.sh
-          ./verify.sh
+          if [ -d source_parts ]; then
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Reconstruct manuscript source and fixed Atlas snapshots
+        if: steps.materialize.outputs.needed == 'true'
+        shell: bash
+        run: |
+          cat source_parts/texpart_* > Szeged_Wiener_2026-09-08.tex
+          python -m pip install --disable-pip-version-check 'networkx==3.6.1'
+          python certificate/export_atlas.py
+
+      - name: Verify exact certificate
+        shell: bash
+        run: |
+          chmod +x certificate/verify.sh
+          certificate/verify.sh
+
+      - name: Install TeX and archive tools
+        if: steps.materialize.outputs.needed == 'true'
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            latexmk texlive-xetex texlive-latex-extra texlive-fonts-recommended \
+            texlive-lang-chinese fonts-noto-cjk zip
+
+      - name: Build PDF and certificate archive
+        if: steps.materialize.outputs.needed == 'true'
+        shell: bash
+        run: |
+          make paper
+          rm -rf certificate/build
+          rm -f Szeged_Wiener_Exact_Certificate_2026-09-08.zip
+          zip -qr Szeged_Wiener_Exact_Certificate_2026-09-08.zip certificate \
+            -x 'certificate/build/*'
+          rm -rf source_parts
+          find . -type f \
+            ! -path './.git/*' \
+            ! -path './certificate/build/*' \
+            ! -name 'SHA256SUMS' \
+            -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+
+      - name: Commit materialized research package
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.materialize.outputs.needed == 'true'
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m 'Materialize manuscript PDF and exact certificate'
+            git push
+          fi
