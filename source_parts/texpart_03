@@ -1,0 +1,180 @@
+\end{lemma}
+
+\begin{proof}
+The pieces meet only in $u$ and $v$.  A path between two vertices of a fixed
+$G_i$ that leaves $G_i$ can enter another block only through $u$ or $v$;
+since $uv$ is already an edge, replacing the outside detour by $uv$ never
+increases the length.  Hence distances inside $G_i$ are the same in $G$.
+Every edge of $G_i$ that is good for a pair inside $G_i$ therefore remains
+good in $G$.  The only pair counted in more than one $G_i$ is $\{u,v\}$,
+and its contribution is zero by \cref{lem:pairzero}.  Thus the contributions
+from within the pieces sum to at least $\sum_i\eta(G_i)$.
+
+For $i\ne j$, the vertices $w_i,w_j$ lie in distinct blocks of $G-u$ and so
+are non-adjacent.  Both are adjacent to $u$ and, because
+$N[u]\subseteq N[v]$, also to $v$.  The four edges
+$w_i u,uw_j,w_i v,vw_j$ are good for $\{w_i,w_j\}$, while
+$d(w_i,w_j)=2$.  Hence
+\[
+  \pairc_G(w_i,w_j)\ge2.
+\]
+Summing over the $\binom{k}{2}$ unordered pairs of blocks gives the extra
+term $2\binom{k}{2}=k(k-1)$.
+\end{proof}
+
+Because $u$ and $v$ occur in every piece,
+\[
+  \sum_{i=1}^k s_i=n+2(k-1).
+\]
+Define $d(s)=L(s)-2s$.  From \eqref{eq:Ltable},
+\[
+ d(5)=0,\quad d(6)=-4,\quad d(7)=-3,\quad d(8)=-2,\quad d(9)=-1.
+\]
+For a piece of order at least ten inside a minimal counterexample we shall
+have $d(s)\ge0$.  Therefore \cref{lem:blockassembly} yields
+\begin{equation}\label{eq:deficit}
+ \eta(G)\ge 2n+(k-1)(k+4)+\sum_{i=1}^k d(s_i).
+\end{equation}
+
+\begin{lemma}\label{lem:deficits}
+If $k\ge3$, then the right-hand side of \eqref{eq:deficit} is at least
+$2n+2$.  If $k=2$ and $n\ge12$, it is at least $2n$.  For $n=10,11$ the only
+combinations not settled by \eqref{eq:deficit} are
+\[
+ n=10:\ (s_1,s_2)=(6,6),\qquad
+ n=11:\ (s_1,s_2)=(6,7).
+\]
+\end{lemma}
+
+\begin{proof}
+Every deficit is at least $-4$.  For $k\ge3$, \eqref{eq:deficit} is at least
+\[
+ 2n+(k-1)(k+4)-4k=2n+k^2-k-4\ge2n+2.
+\]
+If $k=2$ and $n\ge12$, then $s_1+s_2=n+2\ge14$ with each $s_i\ge5$.
+Inspection of the five displayed deficits, together with $d(s)\ge0$ for
+$s\ge10$, gives $d(s_1)+d(s_2)\ge-6$, which cancels the term
+$(k-1)(k+4)=6$.
+
+For $n=10$, $s_1+s_2=12$; the pair $(5,7)$ is already safe and only $(6,6)$
+remains.  For $n=11$, $s_1+s_2=13$; $(5,8)$ is safe and only $(6,7)$ remains.
+\end{proof}
+
+\section{The finite certificate}\label{sec:finite}
+
+This section states exactly what is verified computationally and why those
+finite universes cover every case left by the preceding lemmas.  All values of
+$W$, $\Sz$ and $\eta$ are computed as integers from their definitions.
+
+The input small graphs are taken from the Atlas of Graphs of Read and Wilson
+\cite{ReadWilson}.  The supplied snapshot was extracted with
+\texttt{graph\_atlas\_g} from NetworkX~3.6.1 \cite{NetworkXAtlas}; the
+NetworkX documentation identifies this routine as the list of all graphs on at
+most seven vertices named in the Atlas.  The certificate contains the fixed
+snapshot and its SHA256 digest.  Regeneration is optional: the C++ verifier
+runs directly from the snapshot.
+
+For a graph $C$, a vertex $v\in V(C)$ and a non-empty set
+$T\subseteq N_C(v)$, write
+\[
+  P(C,v,T)
+\]
+for the graph obtained by adjoining a new vertex $u$ with
+$N(u)=\{v\}\cup T$.  By \cref{lem:encoding}, every block-piece in the proof
+has this form.
+
+\begin{proposition}[Small-piece certificate]\label{prop:pieces}
+Let $5\le s\le9$.  Let $C$ be a $2$-connected graph of order $s-1$ that
+is not isomorphic to $K_{s-1}$, $K_{s-1}^2$, or
+$K_{s-1}^{s-3}$.  For every $v\in V(C)$ and every non-empty
+$T\subseteq N_C(v)$,
+\[
+  \eta(P(C,v,T))\ge L(s),
+\]
+where the exact minima are
+\[
+ L(5)=10,\quad L(6)=8,\quad L(7)=11,\quad L(8)=14,\quad L(9)=17.
+\]
+\end{proposition}
+
+\begin{proof}
+For $5\le s\le8$, the deletion block $C$ has $4\le|C|\le7$.  The certificate
+runs over every $2$-connected Atlas representative $C$ of that order other
+than $K_t,K_t^2,K_t^{t-2}$, every choice of $v$, and every non-empty
+$T\subseteq N_C(v)$.  The numbers of generated parameter choices and the
+resulting minima are
+\[
+\begin{array}{c|rrrr}
+ s&5&6&7&8\\ \hline
+ \#P(C,v,T)&12&209&3258&48865\\
+ \min\eta&10&8&11&14.
+\end{array}
+\]
+
+For $s=9$, let $C$ have order eight.  If $\eta(C)\ge15$, then
+\cref{lem:published7} gives $\eta(P(C,v,T))\ge17$.  It remains only to
+consider $2$-connected, non-special $C$ with $\eta(C)\le14$.  Every
+$2$-connected eight-vertex graph becomes connected after deletion of any
+vertex, so it is obtained by adding one non-isolated vertex to a connected
+seven-vertex Atlas representative.  The certificate generates all such
+extensions; 65 generated occurrences survive the stated filters.  Every
+dominated extension of these occurrences is then checked, and the minimum is
+$17$.  Repeated isomorphic occurrences are deliberately retained.
+\end{proof}
+
+We next isolate the two small gluings left by \cref{lem:deficits}.
+
+\begin{proposition}[Glue certificate]\label{prop:glue}
+In the block-decomposition setting of \cref{sec:blocks}, suppose $k=2$.
+If $n=10$ and $(s_1,s_2)=(6,6)$, then $\eta(G)\ge20$; if $n=11$ and
+$(s_1,s_2)=(6,7)$, then $\eta(G)\ge23$.
+\end{proposition}
+
+\begin{proof}
+In the first case \cref{lem:blockassembly} already gives $\eta(G)\ge20$
+whenever $\eta(G_1)+\eta(G_2)\ge18$.  Since $L(6)=8$, only $6$-vertex pieces
+of values $8$ or $9$ need be retained, and only pairs with sum below $18$
+need be glued.  The piece generation in \cref{prop:pieces} yields 15 such
+piece occurrences; there are 105 relevant unordered gluing configurations.
+Their exact minimum is $20$.
+
+For $(6,7)$, the lower bounds $L(6)=8$ and $L(7)=11$ show that only pieces
+attaining these two minima can possibly give a value below $22$.  There are
+10 and 16 such occurrences, respectively, producing 160 gluings.  Their
+minimum is $23$.
+\end{proof}
+
+The last finite statement supplies the induction base at order ten when a
+dominated deletion remains $2$-connected.
+
+\begin{proposition}[Order-ten base certificate]\label{prop:base10}
+Let $G$ be a $2$-connected graph of order ten, distinct from
+$K_{10},K_{10}^2,K_{10}^8$.  Then $\eta(G)\ge20$.
+\end{proposition}
+
+\begin{proof}
+Suppose instead that $\eta(G)\le19$.  By \cref{lem:published10}, $G$ has a
+dominated pair $u,v$.  If some dominated deletion is complete, or is one of the two exceptional
+$2$-connected graphs, then
+\cref{cor:complete-deletion,prop:k2extension,prop:kn3extension} already give
+a contradiction.  If no dominated deletion is $2$-connected, then every one
+is non-$2$-connected and \cref{lem:published9,lem:deficits,prop:glue} settle
+the graph.  Hence we may choose a dominated pair such that $H=G-u$ is
+$2$-connected, non-complete and non-special.  By \cref{lem:published7},
+\[
+  \eta(H)\le17.
+\]
+
+Since $\eta(H)\le17<18$, the contrapositive of
+\cref{lem:published10} gives a dominated pair in the nine-vertex graph $H$.
+If all dominated deletions of $H$ were complete or non-$2$-connected, then
+\cref{lem:published9} and the block estimate would force the only possible
+piece sizes to be $(5,6)$ and hence
+\[
+ \eta(H)\ge L(5)+L(6)+2=20,
+\]
+a contradiction.  Thus $H$ has a dominated deletion $F=H-a$ that is
+$2$-connected or complete.  If $F$ is complete, then $H\cong K_9^t$; by
+\cref{prop:knt}, every non-special such graph has $\eta(H)\ge20$, again a
+contradiction.  Hence $F$ is $2$-connected and non-complete, and
+\cref{lem:published7} gives
