@@ -1,0 +1,833 @@
+% !TEX program = xelatex
+\documentclass[11pt,reqno]{amsart}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{aliascnt}
+\usepackage[no-math]{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont{Noto Serif CJK SC}
+\setCJKmonofont{Noto Sans Mono CJK SC}
+\usepackage[hidelinks]{hyperref}
+
+\setlength{\textwidth}{6.15in}
+\setlength{\textheight}{8.65in}
+\setlength{\oddsidemargin}{0.18in}
+\setlength{\evensidemargin}{0.18in}
+\setlength{\topmargin}{-0.15in}
+
+\newtheorem{theorem}{Theorem}[section]
+\newaliascnt{lemma}{theorem}
+\newtheorem{lemma}[lemma]{Lemma}
+\aliascntresetthe{lemma}
+\newaliascnt{proposition}{theorem}
+\newtheorem{proposition}[proposition]{Proposition}
+\aliascntresetthe{proposition}
+\newaliascnt{corollary}{theorem}
+\newtheorem{corollary}[corollary]{Corollary}
+\aliascntresetthe{corollary}
+\theoremstyle{definition}
+\newaliascnt{definition}{theorem}
+\newtheorem{definition}[definition]{Definition}
+\aliascntresetthe{definition}
+\theoremstyle{remark}
+\newaliascnt{remark}{theorem}
+\newtheorem{remark}[remark]{Remark}
+\aliascntresetthe{remark}
+
+\usepackage[nameinlink,capitalise,noabbrev]{cleveref}
+
+\newcommand{\Sz}{\operatorname{Sz}}
+\newcommand{\dist}{\operatorname{dist}}
+\newcommand{\etaG}{\eta}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\cN}[1]{N[#1]}
+\newcommand{\pairc}{\pi}
+\newcommand{\Knt}[2]{K_{#1}^{#2}}
+
+\title{The Strengthened Szeged--Wiener Conjecture}
+\author{Zhijie He}
+\date{}
+
+\subjclass[2020]{05C12, 05C35, 05C85}
+\keywords{Szeged index, Wiener index, distance in graphs, 2-connected graph}
+
+\begin{document}
+\begin{abstract}
+Bonamy, Knor, Lu\v{z}ar, Pinlou and \v{S}krekovski conjectured in 2017 that every
+$2$-connected graph $G$ of order $n\ge 10$, other than $K_n$, $K_n^2$ and
+$K_n^{n-2}$, satisfies
+\[
+  \Sz(G)-W(G)\ge 2n.
+\]
+We prove the conjecture.  The argument completes the dominated-vertex induction
+introduced in their work.  Complete deletions are handled by an exact formula for
+$K_n^t$; the two exceptional $2$-connected deletions are treated by direct
+true-twin counts; and non-$2$-connected deletions are reduced to a short list of
+small block-pieces.  The finite part of the proof is confined to graphs of order at
+most ten and is verified by an exact, reproducible certificate supplied with the
+paper.  No floating-point computation or graph-isomorphism reduction is used in the
+critical order-ten check.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+For a connected graph $G$, the Wiener index is
+\[
+  W(G)=\sum_{\{a,b\}\subseteq V(G)} d_G(a,b),
+\]
+where $d_G$ is graph distance.  If $e=uv$ is an edge, let $n_e(u)$ be the
+number of vertices strictly closer to $u$ than to $v$, and define $n_e(v)$
+analogously.  The Szeged index is
+\[
+  \Sz(G)=\sum_{uv\in E(G)} n_{uv}(u)n_{uv}(v).
+\]
+We write
+\[
+  \eta(G)=\Sz(G)-W(G).
+\]
+
+Bonamy, Knor, Lu\v{z}ar, Pinlou and \v{S}krekovski proved that every
+$2$-connected non-complete graph of order $n$ satisfies
+\(\eta(G)\ge 2n-6\) \cite[Theorem~2]{BKLPS}.  Their stronger
+Theorem~4, together with Lemma~11, identifies the equality graphs as
+$K_n^2$ and $K_n^{n-2}$ and gives the bound $2n-5$ after excluding them
+\cite[Theorem~4 and Lemma~11]{BKLPS}.  They then proposed the following
+strengthening \cite[Conjecture~5]{BKLPS}.
+
+For $1\le t\le n-1$, let $K_n^t$ denote the graph obtained from $K_{n-1}$ by
+adding one vertex adjacent to exactly $t$ vertices of the old clique.  Thus
+$K_n^{n-1}=K_n$.
+
+\begin{theorem}\label{thm:main}
+Let $G$ be a $2$-connected graph of order $n\ge 10$.  If
+\[
+  G\not\cong K_n,\qquad G\not\cong K_n^2,\qquad
+  G\not\cong K_n^{n-2},
+\]
+then
+\[
+  \eta(G)\ge 2n.
+\]
+\end{theorem}
+
+The proof stays close to the mechanism of \cite{BKLPS}.  The useful point is
+that a putative counterexample must contain a vertex whose closed neighbourhood
+is contained in another closed neighbourhood.  Deleting such a vertex either
+preserves $2$-connectivity, or forces a rigid block decomposition.  The former
+case has two exceptional subcases not covered by a direct induction; the latter
+case requires stronger low-order estimates than those used in
+\cite[Theorem~4]{BKLPS}.  These are the two places where new input is needed.
+
+The finite verification appears only after the structural reductions have been
+proved.  We state the exact finite universes in \cref{sec:finite}; the
+supplementary certificate merely evaluates the definitions on those universes.
+
+\section{Good edges and dominated vertices}\label{sec:prelim}
+
+We use the good-edge formulation of \cite{BKLPS}.  For an unordered pair
+$\{a,b\}$, an edge $xy$ is \emph{good} for $\{a,b\}$ if, after possibly
+interchanging $x$ and $y$,
+\[
+ d_G(a,x)<d_G(a,y),\qquad d_G(b,y)<d_G(b,x).
+\]
+Let $g_G(a,b)$ be the number of good edges for $\{a,b\}$ and set
+\[
+  \pairc_G(a,b)=g_G(a,b)-d_G(a,b).
+\]
+
+\begin{proposition}[Bonamy--Knor--Lu\v{z}ar--Pinlou--\v{S}krekovski]\label{prop:good}
+For every connected graph $G$,
+\[
+  \eta(G)=\sum_{\{a,b\}\subseteq V(G)}\pairc_G(a,b),
+\]
+and every summand is non-negative.
+\end{proposition}
+
+\begin{proof}
+This is \cite[Proposition~6]{BKLPS}.
+\end{proof}
+
+We shall also use the following three published lemmas.  They are quoted with
+all hypotheses because the induction below depends on them exactly as stated.
+
+\begin{lemma}[Dominated deletion]\label{lem:published7}
+Let $G$ be $2$-connected.  Suppose that $u,v\in V(G)$ satisfy
+$N[u]\subseteq N[v]$, and that $G-u$ is $2$-connected and non-complete.  Then
+\[
+  \eta(G)-\eta(G-u)\ge 2.
+\]
+\end{lemma}
+
+\begin{proof}
+This is \cite[Lemma~7]{BKLPS}.
+\end{proof}
+
+\begin{lemma}[Structure after a non-$2$-connected deletion]\label{lem:published9}
+Let $G$ be a $2$-connected non-complete graph distinct from $K_4^2$.
+Assume that at least one pair $u,v$ satisfies $N[u]\subseteq N[v]$, and that
+for every such pair the graph $G-u$ is complete or is not $2$-connected.
+Then, for every such pair, $G-u$ is not $2$-connected.  Moreover, the
+dominator $v$ is the unique cut vertex of $G-u$, and no block of $G-u$ is
+isomorphic to $K_t$, $K_t^2$, or $K_t^{t-2}$.
+\end{lemma}
+
+\begin{proof}
+The first and last assertions are \cite[Lemma~9]{BKLPS}; the proof there also
+shows explicitly that $v$ is the unique cut vertex of $G-u$.
+\end{proof}
+
+\begin{lemma}[No dominated pair]\label{lem:published10}
+Let $G$ be a $2$-connected non-complete graph distinct from $C_5$.  If no two
+vertices $u,v$ satisfy $N[u]\subseteq N[v]$, then
+\[
+  \eta(G)\ge 2|V(G)|.
+\]
+\end{lemma}
+
+\begin{proof}
+This is the final conclusion of \cite[Lemma~10]{BKLPS}.
+\end{proof}
+
+Two elementary observations will make the block argument transparent.
+
+\begin{lemma}\label{lem:pairzero}
+If $N[u]\subseteq N[v]$, then $uv\in E(G)$ and
+\[
+  \pairc_G(u,v)=0.
+\]
+\end{lemma}
+
+\begin{proof}
+The inclusion contains $u\in N[v]$, so $uv$ is an edge.  For $z=v$ the inequality $d(v,z)\le d(u,z)$ is immediate.  If
+$z\notin\{u,v\}$, a shortest $u$--$z$ path begins with a neighbour of $u$;
+that neighbour also lies in $N(v)$, and hence again $d(v,z)\le d(u,z)$.
+Since $uv$ is an edge,
+$d(u,z)\le d(v,z)+1$.
+
+The edge $uv$ is good for $\{u,v\}$.  Suppose another edge $xy$ were good,
+oriented so that $d(u,x)<d(u,y)$.  If $x=u$, then the strict inequality at
+$v$ forces $y=v$, so the edge is $uv$.  Hence for another good edge we have
+$x\ne u$, and the inequality above gives $d(u,x)\ge d(v,x)$.  Adjacency
+gives $d(u,y)=d(u,x)+1$, while the edge $uv$ gives
+\[
+ d(v,y)\ge d(u,y)-1=d(u,x)\ge d(v,x),
+\]
+contradicting the reverse strict inequality required at $v$.  Thus
+$g(u,v)=1=d(u,v)$.
+\end{proof}
+
+\begin{lemma}[Encoding a dominated extension]\label{lem:encoding}
+Let $H=G-u$ and suppose $N_G[u]\subseteq N_G[v]$.  Then
+\[
+  N_G(u)=\{v\}\cup T
+\]
+for some $T\subseteq N_H(v)$.  If $G$ is $2$-connected, then $T\ne\varnothing$.
+Conversely, adjoining to any graph $H$ a new vertex $u$ with neighbourhood
+$\{v\}\cup T$, where $T\subseteq N_H(v)$, produces $N[u]\subseteq N[v]$.
+If, in addition, $H$ is $2$-connected and $T\ne\varnothing$, then the resulting
+graph is $2$-connected.
+\end{lemma}
+
+\begin{proof}
+The closed-neighbourhood inclusion gives $uv\in E(G)$, and every other
+neighbour of $u$ must be adjacent to $v$.  In a $2$-connected graph
+$\deg(u)\ge2$, so $T$ is non-empty.  The converse inclusion is immediate.
+For the final assertion, deleting $u$ leaves $H$; deleting a vertex of $H$
+leaves the connected graph $H-x$, and at least one of the two distinct
+neighbours $v$ and a vertex of $T$ remains adjacent to $u$.  Thus deletion of
+any single vertex leaves a connected graph.
+\end{proof}
+
+\section{The exceptional \texorpdfstring{$2$}{2}-connected deletions}\label{sec:exceptional}
+
+We first remove the case in which deleting the dominated vertex leaves a
+complete graph.
+
+\begin{proposition}\label{prop:knt}
+For $2\le t\le n-2$,
+\[
+  \eta(K_n^t)=2(t-1)(n-t-1).
+\]
+\end{proposition}
+
+\begin{proof}
+Let $x$ be the added vertex, let $A=N(x)$ with $|A|=t$, and let
+$B$ be the remaining $s=n-1-t$ vertices of the old clique.  Then
+\[
+ W(K_n^t)=\binom{n-1}{2}+t+2s.
+\]
+Every edge inside the old clique contributes $1$ to the Szeged index, except
+that each of the $ts$ edges between $A$ and $B$ receives one additional unit
+from $x$.  Each of the $t$ edges from $x$ to $A$ contributes $s+1$.  Hence
+\[
+ \Sz(K_n^t)=\binom{n-1}{2}+ts+t(s+1),
+\]
+and subtraction gives the formula.
+\end{proof}
+
+\begin{corollary}\label{cor:complete-deletion}
+Let $n\ge10$.  If $G$ is $2$-connected, $N[u]\subseteq N[v]$, and $G-u$ is
+complete, then either $G\cong K_n,K_n^2,K_n^{n-2}$ or $\eta(G)\ge2n$.
+\end{corollary}
+
+\begin{proof}
+We have $G\cong K_n^t$.  The cases $t=1$ and $t=n-1$ are, respectively,
+not $2$-connected and complete.  After excluding $t=2,n-2$, it remains to
+consider $3\le t\le n-3$.  The expression in \cref{prop:knt} is concave in
+$t$, so its minimum on this interval occurs at an endpoint and equals
+$4n-16\ge2n$.
+\end{proof}
+
+The other obstruction to the direct induction is that $G-u$ may itself be one
+of the two equality graphs identified by \cite[Theorem~4 and Lemma~11]{BKLPS}.
+Their symmetry makes an exact calculation short.  We record the counting device once.
+
+\begin{lemma}[True-twin quotient count]\label{lem:twin}
+Suppose $V(G)$ is partitioned into non-empty classes
+$V_1,\dots,V_r$ such that each $V_i$ is a clique of true twins (singletons are
+allowed), and between two distinct classes all edges or no edges are present.
+Let $m_i=|V_i|$, let $Q$ be the quotient graph, and write $D_{ij}$ for distance
+in $Q$.  Then
+\[
+ W(G)=\sum_i\binom{m_i}{2}+\sum_{i<j}m_im_jD_{ij}.
+\]
+For an edge $ij$ of $Q$, put
+\[
+ A_{ij}=1+\sum_{h\notin\{i,j\}\,:\,D_{hi}<D_{hj}}m_h,
+ \qquad
+ B_{ij}=1+\sum_{h\notin\{i,j\}\,:\,D_{hj}<D_{hi}}m_h.
+\]
+Then
+\[
+ \Sz(G)=\sum_i\binom{m_i}{2}
+       +\sum_{ij\in E(Q)}m_im_jA_{ij}B_{ij}.
+\]
+\end{lemma}
+
+\begin{proof}
+Distances are constant between two distinct classes and equal to the quotient
+distance.  An internal edge of a true-twin clique has one vertex on each
+strict side and all other vertices are equidistant, so its Szeged contribution
+is $1$.  For a cross edge between $V_i$ and $V_j$, the other vertices in
+$V_i\cup V_j$ are equidistant from its endpoints, while every third class
+lies entirely on one strict side or is equidistant according to the quotient
+distances.  This gives the displayed formulas.
+\end{proof}
+
+\subsection{Deletion to \texorpdfstring{$K_{n-1}^2$}{K(n-1,2)}}
+
+Assume $H=G-u\cong K_{n-1}^2$.  Write the old clique as
+\[
+ Q=\{a,b\}\cup R,\qquad |R|=n-4,
+\]
+and let $x$ be the exceptional vertex, adjacent precisely to $a,b$ in $H$.
+Set
+\[
+ \varepsilon=\mathbf 1_{ux\in E(G)},\qquad
+ k=|N(u)\cap\{a,b\}|,\qquad
+ \ell=|N(u)\cap R|.
+\]
+
+\begin{lemma}\label{lem:k2patterns}
+If $G$ is $2$-connected and $N[u]\subseteq N[v]$ for some $v\in V(H)$,
+then $(\varepsilon,k)$ is one of
+\[
+ (0,0),(0,1),(0,2),(1,1),(1,2),
+\]
+with the ranges for $\ell$ shown in \cref{tab:k2}.
+\end{lemma}
+
+\begin{proof}
+If $v=x$, then $u$ is adjacent to $x$, to no vertex of $R$, and to at least
+one of $a,b$.  If $v\in\{a,b\}$, that vertex is dominating in $H$, so the
+only condition is that it be adjacent to $u$, hence $k\ge1$.  If $v\in R$,
+then $x\notin N[v]$, so $\varepsilon=0$.  These three possibilities give
+exactly the five rows.  The lower bounds on $\ell$ are precisely
+$\deg(u)\ge2$; the upper bound is $|R|=n-4$.
+\end{proof}
+
+For an interior value $0<\ell<n-4$, split $\{a,b\}$ into the selected and
+unselected classes $S,T$ of sizes $k,2-k$, and split $R$ into the selected
+and unselected classes $L,M$ of sizes $\ell,n-4-\ell$.  The classes
+$S,T,L,M$ form a clique; $x$ is adjacent exactly to $S\cup T$; and $u$ is
+adjacent to $S\cup L$ and, when $\varepsilon=1$, to $x$.  Applying
+\cref{lem:twin} gives the following exact expressions.  When $L$ or $M$ is
+empty, the same endpoint values are obtained by omitting that class and
+repeating the quotient count; thus no polynomial extrapolation is being used.
+
+\begin{table}[H]
+\centering
+\caption{The case $G-u\cong K_{n-1}^2$.  The last column excludes the endpoint
+that is isomorphic to $K_n^2$.}\label{tab:k2}
+\small
+\begin{tabular}{@{}c c l c@{}}
+\toprule
+$(\varepsilon,k)$ & admissible $\ell$ & $\eta(G)$ & non-exceptional minimum \\
+\midrule
+$(0,0)$ & $2\le\ell\le n-4$
+& $-2\ell^2+(2n+1)\ell-5$ & $4n-11$ \\
+$(0,1)$ & $1\le\ell\le n-4$
+& $-2\ell^2+(2n-5)\ell+2n-8$ & $4n-15$ \\
+$(0,2)$ & $0\le\ell\le n-4$
+& $-2\ell^2+(2n-10)\ell+4n-14$ & $4n-14$ \\
+$(1,1)$ & $0\le\ell\le n-4$
+& $-3\ell^2+(3n-5)\ell+3n-10$ & $3n-10$ \\
+$(1,2)$ & $0\le\ell\le n-4$
+& $-3\ell^2+(3n-12)\ell+4n-16$ & $4n-16$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Each row is a concave quadratic in $\ell$.  The only exceptional endpoint is
+$(\varepsilon,k,\ell)=(0,2,n-4)$, which is $K_n^2$ and has value $2n-6$.
+Direct endpoint counts give, when $\ell=n-4$, respectively
+\[
+ 9n-41,\quad 5n-20,\quad 2n-6,\quad 10n-38,\quad 4n-16,
+\]
+and when $\ell=0$ is admissible they give
+\[
+ 4n-14,\quad 3n-10,\quad 4n-16
+\]
+for the last three relevant rows.  Hence the minima in \cref{tab:k2} follow.
+
+For illustration, in the extremal row $(\varepsilon,k)=(1,1)$ and
+$0<\ell<n-4$, the quotient classes have sizes
+\[
+  1,1,1,1,\ell,n-4-\ell
+\]
+for $\{u\},\{x\},S,T,L,M$.  Substitution in \cref{lem:twin} gives
+\begin{align*}
+ W(G)&=-\ell^2+n\ell-5\ell+6n-17
+       +\binom{\ell}{2}+\binom{n-4-\ell}{2},\\
+ \Sz(G)&=-4\ell^2+4n\ell-10\ell+9n-27
+       +\binom{\ell}{2}+\binom{n-4-\ell}{2},
+\end{align*}
+so their difference is the fourth row of \cref{tab:k2}.  The other rows are
+obtained by the same quotient calculation; the tables record the full
+arithmetic needed later.
+
+\begin{proposition}\label{prop:k2extension}
+Let $n\ge10$.  Suppose $G$ is $2$-connected, $N[u]\subseteq N[v]$, and
+$G-u\cong K_{n-1}^2$.  If $G\not\cong K_n^2$, then
+\[
+  \eta(G)\ge 3n-10\ge2n.
+\]
+\end{proposition}
+
+\subsection{Deletion to \texorpdfstring{$K_{n-1}^{n-3}$}{K(n-1,n-3)}}
+
+Now let $H=G-u\cong K_{n-1}^{n-3}$.  Write the old clique as
+$Q=A\cup\{z\}$ with $|A|=n-3$, and let $x$ be adjacent to every vertex of
+$A$ and not to $z$.  Set
+\[
+ \varepsilon=\mathbf 1_{ux\in E(G)},\qquad
+ \delta=\mathbf 1_{uz\in E(G)},\qquad
+ \ell=|N(u)\cap A|.
+\]
+If the dominator lies in $A$, it must be one of the $\ell$ selected vertices
+and imposes no further restriction.  If it is $x$, then
+$(\varepsilon,\delta)=(1,0)$; if it is $z$, then
+$(\varepsilon,\delta)=(0,1)$.  Consequently all four pairs
+$(0,0),(0,1),(1,0),(1,1)$ occur, with $\ell\ge2$ in the first row and
+$\ell\ge1$ in the others.
+
+Splitting $A$ into selected and unselected true-twin classes and applying
+\cref{lem:twin} gives \cref{tab:kn3}.  The endpoint $\ell=n-3$ is checked
+directly after deleting the empty unselected class.
+
+\begin{table}[H]
+\centering
+\caption{The case $G-u\cong K_{n-1}^{n-3}$.  The exceptional endpoint in the
+last row is $K_n^{n-2}$.}\label{tab:kn3}
+\small
+\begin{tabular}{@{}c c l c@{}}
+\toprule
+$(\varepsilon,\delta)$ & admissible $\ell$ & $\eta(G)$ & non-exceptional minimum \\
+\midrule
+$(0,0)$ & $2\le\ell\le n-3$
+& $-2\ell^2+2n\ell-6$ & $4n-14$ \\
+$(0,1)$ & $1\le\ell\le n-3$
+& $-2\ell^2+(2n-5)\ell+3n-13$ & $4n-16$ \\
+$(1,0)$ & $1\le\ell\le n-3$
+& $-2\ell^2+(2n-5)\ell+3n-13$ & $4n-16$ \\
+$(1,1)$ & $1\le\ell\le n-3$
+& $-2\ell^2+(2n-12)\ell+8n-24$ & $4n-8$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+At $\ell=n-3$ the four rows have values
+\[
+ 6n-24,\quad 4n-16,\quad 4n-16,\quad 2n-6,
+\]
+respectively; the last graph is exactly $K_n^{n-2}$.  Concavity again gives
+the final column of \cref{tab:kn3}.
+
+\begin{proposition}\label{prop:kn3extension}
+Let $n\ge10$.  Suppose $G$ is $2$-connected, $N[u]\subseteq N[v]$, and
+$G-u\cong K_{n-1}^{n-3}$.  If $G\not\cong K_n^{n-2}$, then
+\[
+  \eta(G)\ge 4n-16\ge2n.
+\]
+\end{proposition}
+
+\section{Block pieces}\label{sec:blocks}
+
+Suppose now that $G$ is $2$-connected, $N[u]\subseteq N[v]$, and $G-u$ is
+not $2$-connected.  Under the hypotheses of \cref{lem:published9}, let
+$C_1,\dots,C_k$ be the blocks of $G-u$.  The vertex $v$ is their unique
+common cut vertex.  Put
+\[
+  G_i=G[V(C_i)\cup\{u\}],\qquad s_i=|V(G_i)|.
+\]
+Since $G$ is $2$-connected, $u$ has in every $C_i$ a neighbour
+$w_i\ne v$; otherwise $v$ would be a cut vertex of $G$.  Hence each $G_i$ is
+$2$-connected by \cref{lem:encoding}, applied to the block $C_i$.  By
+\cref{lem:published9}, each $C_i$ is non-complete and is not $K_t^2$ or
+$K_t^{t-2}$; in particular $|C_i|\ge4$ and $s_i\ge5$.
+
+The proof of \cite[Theorem~4]{BKLPS} observes in precisely this
+situation that every $G_i$ is a proper $2$-connected subgraph and is neither
+complete nor isomorphic to $K_{s_i}^2$ or $K_{s_i}^{s_i-2}$.  For completeness,
+we isolate the short reason.
+
+\begin{lemma}\label{lem:pieces-nonspecial}
+Each $G_i$ is $2$-connected and
+\[
+ G_i\not\cong K_{s_i},\qquad
+ G_i\not\cong K_{s_i}^2,\qquad
+ G_i\not\cong K_{s_i}^{s_i-2}.
+\]
+\end{lemma}
+
+\begin{proof}
+The $2$-connectivity was noted above.  If $G_i$ were complete, then $C_i$
+would be complete.  In $K_{s_i}^2$, deleting the degree-$2$ vertex leaves
+$K_{s_i-1}$; deleting one of the $s_i-3$ old non-universal clique vertices
+leaves $K_{s_i-1}^2$; and deleting either universal vertex makes the degree-$2$
+vertex pendant, so the deletion is not $2$-connected.  Hence a deletion that
+remains $2$-connected is complete or $K_{s_i-1}^2$.
+
+In $K_{s_i}^{s_i-2}$, deleting either of the two non-universal vertices leaves
+$K_{s_i-1}$, whereas deleting a universal vertex leaves
+$K_{s_i-1}^{s_i-3}$.  Thus, again, every $2$-connected deletion is complete or
+one of the two families forbidden for $C_i$ by \cref{lem:published9}.  This
+is the same case analysis used in \cite[proof of Theorem~4]{BKLPS}.
+\end{proof}
+
+We shall use the following small-piece lower bounds, proved in
+\cref{sec:finite} by an exact finite certificate:
+\begin{equation}\label{eq:Ltable}
+\begin{array}{c|ccccc}
+ s&5&6&7&8&9\\ \hline
+ L(s)&10&8&11&14&17.
+\end{array}
+\end{equation}
+Here $L(s)$ is a lower bound for every $s$-vertex $2$-connected graph of the
+form in \cref{lem:encoding} whose deletion graph is a non-special block.
+For $s\ge10$ occurring inside a minimal counterexample, the inductive bound
+will be $L(s)=2s$.
+
+\begin{lemma}[Block assembly]\label{lem:blockassembly}
+With the notation above,
+\[
+  \eta(G)\ge \sum_{i=1}^k\eta(G_i)+k(k-1).
+\]
+\end{lemma}
+
+\begin{proof}
+The pieces meet only in $u$ and $v$.  A path between two vertices of a fixed
+$G_i$ that leaves $G_i$ can enter another block only through $u$ or $v$;
+since $uv$ is already an edge, replacing the outside detour by $uv$ never
+increases the length.  Hence distances inside $G_i$ are the same in $G$.
+Every edge of $G_i$ that is good for a pair inside $G_i$ therefore remains
+good in $G$.  The only pair counted in more than one $G_i$ is $\{u,v\}$,
+and its contribution is zero by \cref{lem:pairzero}.  Thus the contributions
+from within the pieces sum to at least $\sum_i\eta(G_i)$.
+
+For $i\ne j$, the vertices $w_i,w_j$ lie in distinct blocks of $G-u$ and so
+are non-adjacent.  Both are adjacent to $u$ and, because
+$N[u]\subseteq N[v]$, also to $v$.  The four edges
+$w_i u,uw_j,w_i v,vw_j$ are good for $\{w_i,w_j\}$, while
+$d(w_i,w_j)=2$.  Hence
+\[
+  \pairc_G(w_i,w_j)\ge2.
+\]
+Summing over the $\binom{k}{2}$ unordered pairs of blocks gives the extra
+term $2\binom{k}{2}=k(k-1)$.
+\end{proof}
+
+Because $u$ and $v$ occur in every piece,
+\[
+  \sum_{i=1}^k s_i=n+2(k-1).
+\]
+Define $d(s)=L(s)-2s$.  From \eqref{eq:Ltable},
+\[
+ d(5)=0,\quad d(6)=-4,\quad d(7)=-3,\quad d(8)=-2,\quad d(9)=-1.
+\]
+For a piece of order at least ten inside a minimal counterexample we shall
+have $d(s)\ge0$.  Therefore \cref{lem:blockassembly} yields
+\begin{equation}\label{eq:deficit}
+ \eta(G)\ge 2n+(k-1)(k+4)+\sum_{i=1}^k d(s_i).
+\end{equation}
+
+\begin{lemma}\label{lem:deficits}
+If $k\ge3$, then the right-hand side of \eqref{eq:deficit} is at least
+$2n+2$.  If $k=2$ and $n\ge12$, it is at least $2n$.  For $n=10,11$ the only
+combinations not settled by \eqref{eq:deficit} are
+\[
+ n=10:\ (s_1,s_2)=(6,6),\qquad
+ n=11:\ (s_1,s_2)=(6,7).
+\]
+\end{lemma}
+
+\begin{proof}
+Every deficit is at least $-4$.  For $k\ge3$, \eqref{eq:deficit} is at least
+\[
+ 2n+(k-1)(k+4)-4k=2n+k^2-k-4\ge2n+2.
+\]
+If $k=2$ and $n\ge12$, then $s_1+s_2=n+2\ge14$ with each $s_i\ge5$.
+Inspection of the five displayed deficits, together with $d(s)\ge0$ for
+$s\ge10$, gives $d(s_1)+d(s_2)\ge-6$, which cancels the term
+$(k-1)(k+4)=6$.
+
+For $n=10$, $s_1+s_2=12$; the pair $(5,7)$ is already safe and only $(6,6)$
+remains.  For $n=11$, $s_1+s_2=13$; $(5,8)$ is safe and only $(6,7)$ remains.
+\end{proof}
+
+\section{The finite certificate}\label{sec:finite}
+
+This section states exactly what is verified computationally and why those
+finite universes cover every case left by the preceding lemmas.  All values of
+$W$, $\Sz$ and $\eta$ are computed as integers from their definitions.
+
+The input small graphs are taken from the Atlas of Graphs of Read and Wilson
+\cite{ReadWilson}.  The supplied snapshot was extracted with
+\texttt{graph\_atlas\_g} from NetworkX~3.6.1 \cite{NetworkXAtlas}; the
+NetworkX documentation identifies this routine as the list of all graphs on at
+most seven vertices named in the Atlas.  The certificate contains the fixed
+snapshot and its SHA256 digest.  Regeneration is optional: the C++ verifier
+runs directly from the snapshot.
+
+For a graph $C$, a vertex $v\in V(C)$ and a non-empty set
+$T\subseteq N_C(v)$, write
+\[
+  P(C,v,T)
+\]
+for the graph obtained by adjoining a new vertex $u$ with
+$N(u)=\{v\}\cup T$.  By \cref{lem:encoding}, every block-piece in the proof
+has this form.
+
+\begin{proposition}[Small-piece certificate]\label{prop:pieces}
+Let $5\le s\le9$.  Let $C$ be a $2$-connected graph of order $s-1$ that
+is not isomorphic to $K_{s-1}$, $K_{s-1}^2$, or
+$K_{s-1}^{s-3}$.  For every $v\in V(C)$ and every non-empty
+$T\subseteq N_C(v)$,
+\[
+  \eta(P(C,v,T))\ge L(s),
+\]
+where the exact minima are
+\[
+ L(5)=10,\quad L(6)=8,\quad L(7)=11,\quad L(8)=14,\quad L(9)=17.
+\]
+\end{proposition}
+
+\begin{proof}
+For $5\le s\le8$, the deletion block $C$ has $4\le|C|\le7$.  The certificate
+runs over every $2$-connected Atlas representative $C$ of that order other
+than $K_t,K_t^2,K_t^{t-2}$, every choice of $v$, and every non-empty
+$T\subseteq N_C(v)$.  The numbers of generated parameter choices and the
+resulting minima are
+\[
+\begin{array}{c|rrrr}
+ s&5&6&7&8\\ \hline
+ \#P(C,v,T)&12&209&3258&48865\\
+ \min\eta&10&8&11&14.
+\end{array}
+\]
+
+For $s=9$, let $C$ have order eight.  If $\eta(C)\ge15$, then
+\cref{lem:published7} gives $\eta(P(C,v,T))\ge17$.  It remains only to
+consider $2$-connected, non-special $C$ with $\eta(C)\le14$.  Every
+$2$-connected eight-vertex graph becomes connected after deletion of any
+vertex, so it is obtained by adding one non-isolated vertex to a connected
+seven-vertex Atlas representative.  The certificate generates all such
+extensions; 65 generated occurrences survive the stated filters.  Every
+dominated extension of these occurrences is then checked, and the minimum is
+$17$.  Repeated isomorphic occurrences are deliberately retained.
+\end{proof}
+
+We next isolate the two small gluings left by \cref{lem:deficits}.
+
+\begin{proposition}[Glue certificate]\label{prop:glue}
+In the block-decomposition setting of \cref{sec:blocks}, suppose $k=2$.
+If $n=10$ and $(s_1,s_2)=(6,6)$, then $\eta(G)\ge20$; if $n=11$ and
+$(s_1,s_2)=(6,7)$, then $\eta(G)\ge23$.
+\end{proposition}
+
+\begin{proof}
+In the first case \cref{lem:blockassembly} already gives $\eta(G)\ge20$
+whenever $\eta(G_1)+\eta(G_2)\ge18$.  Since $L(6)=8$, only $6$-vertex pieces
+of values $8$ or $9$ need be retained, and only pairs with sum below $18$
+need be glued.  The piece generation in \cref{prop:pieces} yields 15 such
+piece occurrences; there are 105 relevant unordered gluing configurations.
+Their exact minimum is $20$.
+
+For $(6,7)$, the lower bounds $L(6)=8$ and $L(7)=11$ show that only pieces
+attaining these two minima can possibly give a value below $22$.  There are
+10 and 16 such occurrences, respectively, producing 160 gluings.  Their
+minimum is $23$.
+\end{proof}
+
+The last finite statement supplies the induction base at order ten when a
+dominated deletion remains $2$-connected.
+
+\begin{proposition}[Order-ten base certificate]\label{prop:base10}
+Let $G$ be a $2$-connected graph of order ten, distinct from
+$K_{10},K_{10}^2,K_{10}^8$.  Then $\eta(G)\ge20$.
+\end{proposition}
+
+\begin{proof}
+Suppose instead that $\eta(G)\le19$.  By \cref{lem:published10}, $G$ has a
+dominated pair $u,v$.  If some dominated deletion is complete, or is one of the two exceptional
+$2$-connected graphs, then
+\cref{cor:complete-deletion,prop:k2extension,prop:kn3extension} already give
+a contradiction.  If no dominated deletion is $2$-connected, then every one
+is non-$2$-connected and \cref{lem:published9,lem:deficits,prop:glue} settle
+the graph.  Hence we may choose a dominated pair such that $H=G-u$ is
+$2$-connected, non-complete and non-special.  By \cref{lem:published7},
+\[
+  \eta(H)\le17.
+\]
+
+Since $\eta(H)\le17<18$, the contrapositive of
+\cref{lem:published10} gives a dominated pair in the nine-vertex graph $H$.
+If all dominated deletions of $H$ were complete or non-$2$-connected, then
+\cref{lem:published9} and the block estimate would force the only possible
+piece sizes to be $(5,6)$ and hence
+\[
+ \eta(H)\ge L(5)+L(6)+2=20,
+\]
+a contradiction.  Thus $H$ has a dominated deletion $F=H-a$ that is
+$2$-connected or complete.  If $F$ is complete, then $H\cong K_9^t$; by
+\cref{prop:knt}, every non-special such graph has $\eta(H)\ge20$, again a
+contradiction.  Hence $F$ is $2$-connected and non-complete, and
+\cref{lem:published7} gives
+\[
+  \eta(F)\le15.
+\]
+
+The finite universe can now be generated without an isomorphism search.
+Start with all 853 connected seven-vertex Atlas representatives and add one
+non-isolated vertex in every possible way; retain the $2$-connected graphs
+$F$ with $\eta(F)\le15$.  This produces 97 labelled occurrences.  From each,
+generate every dominated extension from \cref{lem:encoding}; retain the
+non-special graphs $H$ with $\eta(H)\le17$.  This produces 681 occurrences.
+Finally generate every dominated extension of each retained $H$, excluding
+only the three special order-ten graphs.  At this last stage no
+$2$-connectivity filter and no isomorphism deduplication are used, so the
+300311 generated graphs form a superset of all remaining candidates.  Their
+minimum value is exactly $20$, a contradiction.
+\end{proof}
+
+\begin{remark}[What the certificate checks]\label{rem:certificate}
+The verifier performs all-pairs breadth-first search, sums the resulting
+integer distances for $W$, and for every edge $uv$ counts directly the
+vertices on the two strict distance sides to obtain the factor
+$n_{uv}(u)n_{uv}(v)$.  A graph is tested for $2$-connectivity by deleting each
+vertex in turn and checking connectivity.  The three exceptional families are
+recognized by their degree sequences, which uniquely determine them:
+\[
+\begin{aligned}
+ K_n &: (n-1)^n,\\
+ K_n^2 &: 2,(n-2)^{n-3},(n-1)^2,\\
+ K_n^{n-2} &: (n-2)^2,(n-1)^{n-2}.
+\end{aligned}
+\]
+For $K_n^2$, the two vertices of degree $n-1$ are universal, so the
+degree-$2$ vertex is forced to be adjacent exactly to them.  For
+$K_n^{n-2}$, the $n-2$ vertices of degree $n-1$ are universal, forcing the
+remaining two vertices to be non-adjacent.  Thus these degree tests introduce
+no isomorphism ambiguity.  All arithmetic is integral.  The critical order-ten
+run intentionally keeps
+repeated labelled copies, so correctness does not depend on a graph-isomorphism
+algorithm or a canonical-labelling hash.
+\end{remark}
+
+\section{Proof of the conjecture}\label{sec:proof}
+
+\begin{proof}[Proof of \cref{thm:main}]
+The case $n=10$ is \cref{prop:base10}.  Suppose $n\ge11$ and choose a
+counterexample $G$ of minimum order.  The graph is non-complete and is not
+$C_5$.  By \cref{lem:published10}, there are vertices $u,v$ with
+$N[u]\subseteq N[v]$.
+
+Fix any such pair and put $H=G-u$.  If $H$ is complete, then
+\cref{cor:complete-deletion} gives a contradiction.  If $H$ is
+$2$-connected and non-complete, there are three possibilities.  If
+\[
+ H\not\cong K_{n-1}^2,K_{n-1}^{n-3},
+\]
+then $H$ has order $n-1\ge10$ and is not one of the three exceptional graphs
+for its order.  Minimality of $G$ gives
+\[
+  \eta(H)\ge2(n-1),
+\]
+and \cref{lem:published7} gives $\eta(G)\ge2n$, a contradiction.  If
+$H\cong K_{n-1}^2$ or $K_{n-1}^{n-3}$, the contradiction follows from
+\cref{prop:k2extension,prop:kn3extension}.
+
+Consequently, for every dominated pair in $G$, the deletion of the dominated
+vertex is not $2$-connected.  The hypotheses of \cref{lem:published9} are
+therefore satisfied.  Let $C_1,\dots,C_k$ be the blocks of $G-u$ and form the
+pieces $G_i$ as in \cref{sec:blocks}.  Each $G_i$ is a proper $2$-connected subgraph of $G$, and
+\cref{lem:pieces-nonspecial} shows that it is not one of the three exceptional
+graphs for its order.
+
+If $s_i\ge10$, minimality therefore gives $\eta(G_i)\ge2s_i$; if $s_i<10$,
+\cref{prop:pieces} gives the lower bound $L(s_i)$.  Hence
+\cref{lem:blockassembly,lem:deficits} apply.  For $n\ge12$ they immediately
+give $\eta(G)\ge2n$.  If $n=11$, the only unresolved size pattern is
+$(6,7)$, which is settled by \cref{prop:glue}.  This final contradiction
+proves the theorem.
+\end{proof}
+
+\section{Certificate and reproducibility}\label{sec:repro}
+
+The supplementary archive contains three C++17 verifiers and the fixed
+small-graph snapshots used in \cref{sec:finite}.  The command
+\texttt{verify.sh} checks the SHA256 digests of the inputs, compiles the
+verifiers, and reproduces the counts and minima stated in
+\cref{prop:pieces,prop:glue,prop:base10}.  The fixed files are
+\nolinkurl{connected7_graph6.txt}, \nolinkurl{connected7_masks.txt}, and
+\nolinkurl{atlas_bases_4_7.txt}.  An optional Python script regenerates them
+from NetworkX~3.6.1; NetworkX is not needed once the snapshots are present.
+The C++ programs use only integer arithmetic and the algorithms described in
+\cref{rem:certificate}.
+
+\begin{thebibliography}{9}
+
+\bibitem{BKLPS}
+M.~Bonamy, M.~Knor, B.~Lu\v{z}ar, A.~Pinlou and R.~\v{S}krekovski,
+\emph{On the difference between the Szeged and the Wiener index},
+Appl. Math. Comput. \textbf{312} (2017), 202--213.
+\href{https://doi.org/10.1016/j.amc.2017.05.047}{doi:10.1016/j.amc.2017.05.047}.
+
+\bibitem{ReadWilson}
+R.~C.~Read and R.~J.~Wilson,
+\emph{An Atlas of Graphs}, Oxford University Press, Oxford, 1998.
+
+\bibitem{NetworkXAtlas}
+NetworkX Developers,
+\emph{Graph generators: Atlas}, NetworkX 3.6.1 documentation,
+\href{https://networkx.org/documentation/stable/reference/generated/networkx.generators.atlas.graph_atlas_g.html}{online documentation},
+accessed 8 September 2026.
+
+\end{thebibliography}
+
+\end{document}
