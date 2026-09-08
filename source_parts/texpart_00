@@ -1,0 +1,180 @@
+% !TEX program = xelatex
+\documentclass[11pt,reqno]{amsart}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{aliascnt}
+\usepackage[no-math]{fontspec}
+\usepackage{xeCJK}
+\setCJKmainfont{Noto Serif CJK SC}
+\setCJKmonofont{Noto Sans Mono CJK SC}
+\usepackage[hidelinks]{hyperref}
+
+\setlength{\textwidth}{6.15in}
+\setlength{\textheight}{8.65in}
+\setlength{\oddsidemargin}{0.18in}
+\setlength{\evensidemargin}{0.18in}
+\setlength{\topmargin}{-0.15in}
+
+\newtheorem{theorem}{Theorem}[section]
+\newaliascnt{lemma}{theorem}
+\newtheorem{lemma}[lemma]{Lemma}
+\aliascntresetthe{lemma}
+\newaliascnt{proposition}{theorem}
+\newtheorem{proposition}[proposition]{Proposition}
+\aliascntresetthe{proposition}
+\newaliascnt{corollary}{theorem}
+\newtheorem{corollary}[corollary]{Corollary}
+\aliascntresetthe{corollary}
+\theoremstyle{definition}
+\newaliascnt{definition}{theorem}
+\newtheorem{definition}[definition]{Definition}
+\aliascntresetthe{definition}
+\theoremstyle{remark}
+\newaliascnt{remark}{theorem}
+\newtheorem{remark}[remark]{Remark}
+\aliascntresetthe{remark}
+
+\usepackage[nameinlink,capitalise,noabbrev]{cleveref}
+
+\newcommand{\Sz}{\operatorname{Sz}}
+\newcommand{\dist}{\operatorname{dist}}
+\newcommand{\etaG}{\eta}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\cN}[1]{N[#1]}
+\newcommand{\pairc}{\pi}
+\newcommand{\Knt}[2]{K_{#1}^{#2}}
+
+\title{The Strengthened Szeged--Wiener Conjecture}
+\author{Zhijie He}
+\date{}
+
+\subjclass[2020]{05C12, 05C35, 05C85}
+\keywords{Szeged index, Wiener index, distance in graphs, 2-connected graph}
+
+\begin{document}
+\begin{abstract}
+Bonamy, Knor, Lu\v{z}ar, Pinlou and \v{S}krekovski conjectured in 2017 that every
+$2$-connected graph $G$ of order $n\ge 10$, other than $K_n$, $K_n^2$ and
+$K_n^{n-2}$, satisfies
+\[
+  \Sz(G)-W(G)\ge 2n.
+\]
+We prove the conjecture.  The argument completes the dominated-vertex induction
+introduced in their work.  Complete deletions are handled by an exact formula for
+$K_n^t$; the two exceptional $2$-connected deletions are treated by direct
+true-twin counts; and non-$2$-connected deletions are reduced to a short list of
+small block-pieces.  The finite part of the proof is confined to graphs of order at
+most ten and is verified by an exact, reproducible certificate supplied with the
+paper.  No floating-point computation or graph-isomorphism reduction is used in the
+critical order-ten check.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+
+For a connected graph $G$, the Wiener index is
+\[
+  W(G)=\sum_{\{a,b\}\subseteq V(G)} d_G(a,b),
+\]
+where $d_G$ is graph distance.  If $e=uv$ is an edge, let $n_e(u)$ be the
+number of vertices strictly closer to $u$ than to $v$, and define $n_e(v)$
+analogously.  The Szeged index is
+\[
+  \Sz(G)=\sum_{uv\in E(G)} n_{uv}(u)n_{uv}(v).
+\]
+We write
+\[
+  \eta(G)=\Sz(G)-W(G).
+\]
+
+Bonamy, Knor, Lu\v{z}ar, Pinlou and \v{S}krekovski proved that every
+$2$-connected non-complete graph of order $n$ satisfies
+\(\eta(G)\ge 2n-6\) \cite[Theorem~2]{BKLPS}.  Their stronger
+Theorem~4, together with Lemma~11, identifies the equality graphs as
+$K_n^2$ and $K_n^{n-2}$ and gives the bound $2n-5$ after excluding them
+\cite[Theorem~4 and Lemma~11]{BKLPS}.  They then proposed the following
+strengthening \cite[Conjecture~5]{BKLPS}.
+
+For $1\le t\le n-1$, let $K_n^t$ denote the graph obtained from $K_{n-1}$ by
+adding one vertex adjacent to exactly $t$ vertices of the old clique.  Thus
+$K_n^{n-1}=K_n$.
+
+\begin{theorem}\label{thm:main}
+Let $G$ be a $2$-connected graph of order $n\ge 10$.  If
+\[
+  G\not\cong K_n,\qquad G\not\cong K_n^2,\qquad
+  G\not\cong K_n^{n-2},
+\]
+then
+\[
+  \eta(G)\ge 2n.
+\]
+\end{theorem}
+
+The proof stays close to the mechanism of \cite{BKLPS}.  The useful point is
+that a putative counterexample must contain a vertex whose closed neighbourhood
+is contained in another closed neighbourhood.  Deleting such a vertex either
+preserves $2$-connectivity, or forces a rigid block decomposition.  The former
+case has two exceptional subcases not covered by a direct induction; the latter
+case requires stronger low-order estimates than those used in
+\cite[Theorem~4]{BKLPS}.  These are the two places where new input is needed.
+
+The finite verification appears only after the structural reductions have been
+proved.  We state the exact finite universes in \cref{sec:finite}; the
+supplementary certificate merely evaluates the definitions on those universes.
+
+\section{Good edges and dominated vertices}\label{sec:prelim}
+
+We use the good-edge formulation of \cite{BKLPS}.  For an unordered pair
+$\{a,b\}$, an edge $xy$ is \emph{good} for $\{a,b\}$ if, after possibly
+interchanging $x$ and $y$,
+\[
+ d_G(a,x)<d_G(a,y),\qquad d_G(b,y)<d_G(b,x).
+\]
+Let $g_G(a,b)$ be the number of good edges for $\{a,b\}$ and set
+\[
+  \pairc_G(a,b)=g_G(a,b)-d_G(a,b).
+\]
+
+\begin{proposition}[Bonamy--Knor--Lu\v{z}ar--Pinlou--\v{S}krekovski]\label{prop:good}
+For every connected graph $G$,
+\[
+  \eta(G)=\sum_{\{a,b\}\subseteq V(G)}\pairc_G(a,b),
+\]
+and every summand is non-negative.
+\end{proposition}
+
+\begin{proof}
+This is \cite[Proposition~6]{BKLPS}.
+\end{proof}
+
+We shall also use the following three published lemmas.  They are quoted with
+all hypotheses because the induction below depends on them exactly as stated.
+
+\begin{lemma}[Dominated deletion]\label{lem:published7}
+Let $G$ be $2$-connected.  Suppose that $u,v\in V(G)$ satisfy
+$N[u]\subseteq N[v]$, and that $G-u$ is $2$-connected and non-complete.  Then
+\[
+  \eta(G)-\eta(G-u)\ge 2.
+\]
+\end{lemma}
+
+\begin{proof}
+This is \cite[Lemma~7]{BKLPS}.
+\end{proof}
+
+\begin{lemma}[Structure after a non-$2$-connected deletion]\label{lem:published9}
+Let $G$ be a $2$-connected non-complete graph distinct from $K_4^2$.
+Assume that at least one pair $u,v$ satisfies $N[u]\subseteq N[v]$, and that
+for every such pair the graph $G-u$ is complete or is not $2$-connected.
+Then, for every such pair, $G-u$ is not $2$-connected.  Moreover, the
+dominator $v$ is the unique cut vertex of $G-u$, and no block of $G-u$ is
+isomorphic to $K_t$, $K_t^2$, or $K_t^{t-2}$.
+\end{lemma}
+
+\begin{proof}
+The first and last assertions are \cite[Lemma~9]{BKLPS}; the proof there also
