@@ -1,0 +1,52 @@
+name: Final context cleanup
+
+on:
+  push:
+    paths:
+      - '.github/workflows/final-context-cleanup.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Remove run-history wording
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('README.md')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('GitHub Actions also runs the exact certificate automatically on pushes and pull requests. The first complete materialization run regenerated the fixed Atlas snapshots with NetworkX 3.6.1, passed the exact certificate, compiled the manuscript, and packaged the archive successfully.',
+                      'GitHub Actions runs the exact certificate on pushes and pull requests, regenerates the fixed Atlas snapshots with NetworkX 3.6.1, compiles the manuscript, and packages the archive.')
+          p.write_text(s, encoding='utf-8')
+          p=Path('FIRST_PUBLICATION_RECORD.md')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('**Materialization time (UTC):**', '**Package timestamp (UTC):**')
+          s=s.replace('materialization', 'package build')
+          s=s.replace('Materialization', 'Package build')
+          p.write_text(s, encoding='utf-8')
+          p=Path('.github/workflows/verify.yml')
+          s=p.read_text(encoding='utf-8')
+          s=s.replace('Detect first materialization', 'Detect initial package build')
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Audit wording
+        run: |
+          if grep -RniE 'materialization|our conversation|chat history|undergraduate|thesis|defense|Astra|ChatGPT|OpenAI|Aristotle' README.md FIRST_PUBLICATION_RECORD.md .github/workflows/verify.yml; then
+            echo 'Private/process wording remains' >&2
+            exit 1
+          fi
+      - name: Commit cleanup
+        run: |
+          rm -f .github/workflows/conversation-trace-audit.yml .github/workflows/final-context-cleanup.yml
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'Remove build-history wording from public files'
+          git push
