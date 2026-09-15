@@ -20,8 +20,8 @@ jobs:
         with:
           python-version: '3.13'
 
-      - name: Detect whether package reconstruction is needed
-        id: package
+      - name: Detect first materialization
+        id: materialize
         shell: bash
         run: |
           if [ -d source_parts ]; then
@@ -31,7 +31,7 @@ jobs:
           fi
 
       - name: Reconstruct manuscript source and fixed Atlas snapshots
-        if: steps.package.outputs.needed == 'true'
+        if: steps.materialize.outputs.needed == 'true'
         shell: bash
         run: |
           cat source_parts/texpart_* > Szeged_Wiener_2026-09-08.tex
@@ -45,7 +45,7 @@ jobs:
           certificate/verify.sh
 
       - name: Install TeX and archive tools
-        if: steps.package.outputs.needed == 'true'
+        if: steps.materialize.outputs.needed == 'true'
         shell: bash
         run: |
           sudo apt-get update
@@ -54,7 +54,7 @@ jobs:
             texlive-lang-chinese fonts-noto-cjk zip
 
       - name: Build PDF and certificate archive
-        if: steps.package.outputs.needed == 'true'
+        if: steps.materialize.outputs.needed == 'true'
         shell: bash
         run: |
           make paper
@@ -79,14 +79,14 @@ jobs:
             ! -name 'SHA256SUMS' \
             -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
 
-      - name: Commit reconstructed research package
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.package.outputs.needed == 'true'
+      - name: Commit materialized research package
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.materialize.outputs.needed == 'true'
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
           if ! git diff --cached --quiet; then
-            git commit -m 'Build manuscript PDF and exact certificate'
+            git commit -m 'Materialize manuscript PDF and exact certificate'
             git push
           fi
