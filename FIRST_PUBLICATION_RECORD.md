@@ -2,17 +2,17 @@
 
 **Repository:** `FDmd233/strengthened-szeged-wiener-conjecture`
 
-**First complete materialized package commit:** `f4dd375fbedc5153cc7aa13c8102f1c0f4eb3056`
+**Reference package commit:** `f4dd375fbedc5153cc7aa13c8102f1c0f4eb3056`
 
-**Materialization time (UTC):** `2026-09-08T17:32:11Z`
+**Package timestamp (UTC):** `2026-09-08T17:32:11Z`
 
 **Verification workflow run:** `34257517977`
 
-The commit above is the first commit in this repository containing the complete manuscript source, a compiled PDF, the unpacked exact finite certificate, the fixed Graph Atlas input snapshots, and a downloadable certificate archive.
+The commit above contains the manuscript source, compiled PDF, unpacked exact finite certificate, fixed Graph Atlas input snapshots, and packaged certificate archive.
 
-The package was materialized by GitHub Actions from the manuscript source and certificate sources. During the same workflow run, NetworkX 3.6.1 regenerated the fixed Atlas snapshots, their SHA256 digests were checked, the C++17 certificate was compiled and executed, and the manuscript was compiled with XeLaTeX. The workflow completed successfully.
+The verification workflow uses NetworkX 3.6.1 to regenerate the fixed Atlas snapshots when needed, checks their SHA256 digests, compiles and executes the C++17 certificate, and compiles the manuscript with XeLaTeX.
 
-The exact certificate reproduced the critical finite outputs, including
+The exact certificate reproduces the critical finite outputs, including
 
 ```text
 F8 97
