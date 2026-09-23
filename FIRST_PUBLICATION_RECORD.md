@@ -1,12 +1,12 @@
 # Repository Publication and Integrity Record
 
-**Repository:** \`FDmd233/strengthened-szeged-wiener-conjecture\`
+**Repository:** `FDmd233/strengthened-szeged-wiener-conjecture`
 
-**First complete public artifact commit:** \`f4dd375fbedc5153cc7aa13c8102f1c0f4eb3056\`
+**First complete public artifact commit:** `f4dd375fbedc5153cc7aa13c8102f1c0f4eb3056`
 
-**Artifact build time (UTC):** \`2026-09-08T17:32:11Z\`
+**Artifact build time (UTC):** `2026-09-08T17:32:11Z`
 
-**Verification workflow run:** \`34257517977\`
+**Verification workflow run:** `34257517977`
 
 The commit above is the first commit in this repository containing the complete manuscript source, a compiled PDF, the unpacked exact finite certificate, the fixed Graph Atlas input snapshots, and a downloadable certificate archive.
 
@@ -14,7 +14,7 @@ GitHub Actions generated the public artifacts from the manuscript and certificat
 
 The exact certificate reproduced the critical finite outputs, including
 
-\`\`\`text
+```text
 F8 97
 H9 681
 G10 300311 min 20 bad 0
@@ -26,7 +26,7 @@ order8 nonspecial eta<=14 labelled_ext 65 L9_from_low=17
 n10 105 min 20 bad 0
 n11 160 min 23 bad 0
 certificate verification: PASS
-\`\`\`
+```
 
 ## Status note
 
