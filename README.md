@@ -60,7 +60,7 @@ n10 105 min 20 bad 0
 n11 160 min 23 bad 0
 ```
 
-GitHub Actions also runs the exact certificate automatically on pushes and pull requests. The first complete materialization run regenerated the fixed Atlas snapshots with NetworkX 3.6.1, passed the exact certificate, compiled the manuscript, and packaged the archive successfully.
+GitHub Actions also runs the exact certificate automatically on pushes and pull requests. The initial reproducibility run regenerated the fixed Atlas snapshots with NetworkX 3.6.1, passed the exact certificate, compiled the manuscript, and packaged the archive successfully.
 
 ## Build the manuscript
 
