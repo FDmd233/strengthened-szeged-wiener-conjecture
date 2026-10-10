@@ -168,3 +168,11 @@ jobs:
             git pull --rebase origin main
             git push origin HEAD:main
           fi
+
+      - name: Retain published PDF for page-by-page layout review
+        uses: actions/upload-artifact@v4
+        with:
+          name: szeged-wiener-pdf-${{ github.sha }}
+          path: Szeged_Wiener_2026-09-08.pdf
+          if-no-files-found: error
+          retention-days: 14
