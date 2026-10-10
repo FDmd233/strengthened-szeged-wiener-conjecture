@@ -1,11 +1,6 @@
 name: Rebuild manuscript PDF
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'Szeged_Wiener_2026-09-08.tex'
-      - '.github/workflows/rebuild-pdf.yml'
   workflow_dispatch:
 
 permissions:

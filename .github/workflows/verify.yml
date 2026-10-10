@@ -142,17 +142,29 @@ jobs:
           test -s Szeged_Wiener_2026-09-08.pdf
           test "$(stat -c%s Szeged_Wiener_2026-09-08.pdf)" -gt 50000
 
-      - name: Update PDF and checksum
-        if: steps.pdf_state.outputs.needs_build == 'true'
+      - name: Synchronize PDF and both SHA256 manifests
         shell: bash
         run: |
+          set -euo pipefail
           sha256sum Szeged_Wiener_2026-09-08.tex Szeged_Wiener_2026-09-08.pdf \
             > SOURCE_AND_PDF_SHA256SUMS
+          python3 - <<'PY'
+          import hashlib
+          import subprocess
+          from pathlib import Path
+          names = subprocess.check_output(['git', 'ls-files', '-z']).split(b'\0')
+          paths = sorted(name.decode('utf-8') for name in names if name and name != b'SHA256SUMS')
+          with Path('SHA256SUMS').open('w', encoding='utf-8') as fp:
+              for path in paths:
+                  digest = hashlib.sha256(Path(path).read_bytes()).hexdigest()
+                  fp.write(f'{digest}  ./{path}\n')
+          PY
+          sha256sum -c SHA256SUMS
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add Szeged_Wiener_2026-09-08.pdf SOURCE_AND_PDF_SHA256SUMS
+          git add Szeged_Wiener_2026-09-08.pdf SOURCE_AND_PDF_SHA256SUMS SHA256SUMS
           if ! git diff --cached --quiet; then
-            git commit -m 'Rebuild Szeged-Wiener PDF from corrected TeX'
+            git commit -m 'Synchronize Szeged-Wiener PDF and checksum manifests'
             git pull --rebase origin main
             git push origin HEAD:main
           fi
