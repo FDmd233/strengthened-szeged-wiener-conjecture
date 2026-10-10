@@ -5,6 +5,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: szeged-verify-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -102,7 +106,27 @@ jobs:
         with:
           persist-credentials: true
 
+      - name: Refresh main before packaging PDF
+        shell: bash
+        run: |
+          git fetch origin main
+          git checkout -B main origin/main
+
+      - name: Verify source/PDF checksum before rebuilding
+        id: pdf_state
+        shell: bash
+        run: |
+          if [ -s SOURCE_AND_PDF_SHA256SUMS ] && \
+             sha256sum -c --status SOURCE_AND_PDF_SHA256SUMS && \
+             test -s Szeged_Wiener_2026-09-08.pdf; then
+            echo "needs_build=false" >> "$GITHUB_OUTPUT"
+            echo "Existing PDF matches the canonical TeX and recorded checksum."
+          else
+            echo "needs_build=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Install XeLaTeX
+        if: steps.pdf_state.outputs.needs_build == 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
@@ -110,6 +134,7 @@ jobs:
             texlive-fonts-recommended texlive-lang-chinese fonts-noto-cjk
 
       - name: Compile actual canonical TeX
+        if: steps.pdf_state.outputs.needs_build == 'true'
         shell: bash
         run: |
           latexmk -xelatex -interaction=nonstopmode -halt-on-error \
@@ -118,6 +143,7 @@ jobs:
           test "$(stat -c%s Szeged_Wiener_2026-09-08.pdf)" -gt 50000
 
       - name: Update PDF and checksum
+        if: steps.pdf_state.outputs.needs_build == 'true'
         shell: bash
         run: |
           sha256sum Szeged_Wiener_2026-09-08.tex Szeged_Wiener_2026-09-08.pdf \
