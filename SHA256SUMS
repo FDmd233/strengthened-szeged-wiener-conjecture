@@ -1,6 +1,6 @@
 34643d03a708d1fc843227da22a1f31a899ba1bba1c645680c4efcb4a898e995  ./.gitattributes
 2245343202f5d1170c19cbe1f409cfcd49c8ff878d0e7bb536e0f75b6fae5519  ./.github/workflows/rebuild-pdf.yml
-328ec5f9fda5e458c3946de02a7b90304bbb690e4ab7eed6dc815f24b32e53c4  ./.github/workflows/verify.yml
+fcfb832012d75a2b1d0983f84e8560bcea827eee503cb9526cf34356fe0d791e  ./.github/workflows/verify.yml
 27d0a08581178da3dbbad4a27aa56badef0262f2ddf6a45b4828e4954067b0bf  ./.gitignore
 a1b1ef4e6490a36616a82fc93471cad04e9a59910b5d39c1a76a70d8d123719e  ./CITATION.cff
 546073843417112aaabfe4ec4a5bd80769598a5ef97e8c9e93cfb4bd8ef409fc  ./FIRST_PUBLICATION_RECORD.md
