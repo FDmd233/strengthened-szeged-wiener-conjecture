@@ -89,6 +89,10 @@ The first complete public package and successful verification run are documented
 - [MathDB problem](https://mathdb.com/p/332514/the-strengthened-szeged-wiener-lower-bound-for-2-connected-g)
 - M. Bonamy, M. Knor, B. Lužar, A. Pinlou and R. Škrekovski, *On the difference between the Szeged and the Wiener index*, Applied Mathematics and Computation **312** (2017), 202--213.
 
+## Related preprint (September 2026)
+
+Lily Zhang and Evan Li, *Improved Bounds on the Szeged-Wiener Gap and the BKLPS Conjecture*, [arXiv:2609.20025](https://arxiv.org/abs/2609.20025) (submitted 17 September 2026), present another claimed proof of the same conjecture, together with equality constructions. The manuscript and exact certificate in this repository were already present in the [8 September 2026 artifact commit](https://github.com/FDmd233/strengthened-szeged-wiener-conjecture/commit/f4dd375fbedc5153cc7aa13c8102f1c0f4eb3056), as corroborated by its corresponding successful GitHub Actions run. These records describe dated artifacts; they do not by themselves establish public-access history, mathematical priority, or referee-level verification of either proof. A detailed mathematical comparison of the two approaches remains open.
+
 ## Author
 
 Zhijie He
