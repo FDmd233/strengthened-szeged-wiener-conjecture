@@ -27,6 +27,10 @@ The argument completes the dominated-vertex induction from the 2017 paper. Compl
 - [PDF](Szeged_Wiener_2026-09-08.pdf)
 - [LaTeX source](Szeged_Wiener_2026-09-08.tex)
 
+## Independent all-order induction audit
+
+The [dominated-vertex induction audit](verification/DOMINATED_INDUCTION_AUDIT.md) independently checks the four-way deletion case split, the block inequality, and every low-order deficit combination. It isolates exactly which statements come from the 2017 source and which are delegated to the repository's C++ certificate. In particular, dominated pairs always consist of **distinct vertices**, as specified in the corrected LaTeX manuscript.
+
 ## Exact finite certificate
 
 The finite verification used in Section 5 is available both as an unpacked directory and as the original archive:
