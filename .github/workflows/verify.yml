@@ -115,7 +115,7 @@ jobs:
           latexmk -xelatex -interaction=nonstopmode -halt-on-error \
             -file-line-error Szeged_Wiener_2026-09-08.tex
           test -s Szeged_Wiener_2026-09-08.pdf
-          pdfinfo Szeged_Wiener_2026-09-08.pdf | grep '^Pages:'
+          test "$(stat -c%s Szeged_Wiener_2026-09-08.pdf)" -gt 50000
 
       - name: Update PDF and checksum
         shell: bash
