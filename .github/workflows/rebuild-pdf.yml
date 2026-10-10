@@ -1,0 +1,59 @@
+name: Rebuild manuscript PDF
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Szeged_Wiener_2026-09-08.tex'
+      - '.github/workflows/rebuild-pdf.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: szeged-wiener-pdf-main
+  cancel-in-progress: false
+
+jobs:
+  typeset:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install XeLaTeX and PDF inspection utilities
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            latexmk texlive-xetex texlive-latex-extra texlive-fonts-recommended \
+            texlive-lang-chinese fonts-noto-cjk poppler-utils
+
+      - name: Build, verify and inspect PDF
+        shell: bash
+        run: |
+          set -euo pipefail
+          latexmk -xelatex -interaction=nonstopmode -halt-on-error -file-line-error Szeged_Wiener_2026-09-08.tex
+          test -s Szeged_Wiener_2026-09-08.pdf
+          if grep -Eq 'There were undefined references|Reference .* undefined|Citation .* undefined' Szeged_Wiener_2026-09-08.log; then
+            echo "Unresolved references or citations found"
+            exit 1
+          fi
+          pdfinfo Szeged_Wiener_2026-09-08.pdf | grep -E '^(Pages|Page size|File size):'
+          sha256sum Szeged_Wiener_2026-09-08.tex Szeged_Wiener_2026-09-08.pdf
+
+      - name: Replace published PDF in the main branch
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- Szeged_Wiener_2026-09-08.pdf
+          if git diff --cached --quiet; then
+            echo "Published PDF already matches source."
+            exit 0
+          fi
+          git commit -m 'Rebuild Szeged-Wiener PDF from corrected LaTeX'
+          git push origin HEAD:main
